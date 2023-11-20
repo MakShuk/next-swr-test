@@ -1,21 +1,16 @@
+import usePost from "@/lib/get-post";
 import { FC } from "react";
-import useSWR from "swr";
-const fetcher = (...args: [RequestInfo, RequestInit?]) =>
-  fetch(...args).then((res) => res.json());
 
 interface PostProps {
   id: number;
 }
 
-export const Post: FC<PostProps> = ({ id }) => {
-  const { data, error, isLoading } = useSWR(
-    `https://jsonplaceholder.typicode.com/posts/${id}`,
-    fetcher
-  );
-
-  if (error) return <div>failed to load</div>;
+export const PostBody: FC<PostProps> = ({ id }) => {
+  const { post, isLoading, isError, isValidating } = usePost(id);
+   if (isValidating) return <div>isValidating</div>;
+  if (isError) return <div>failed to load</div>;
   if (isLoading) return <div>loading...</div>;
-  return <>{data.body}</>;
+  return <>{post.body}</>;
 };
 
-export default Post;
+export default PostBody;
